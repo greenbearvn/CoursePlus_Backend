@@ -7,6 +7,7 @@ const quiz = require("./frontend/QuizRoutes");
 const cart = require("./frontend/CartRoutes");
 const payment = require("./frontend/PaymentRoutes");
 const watching = require("./frontend/WatchingRoutes");
+const account = require("./frontend/AccountRoutes");
 
 const khoahoc = require("./admin/KhoaHocRoutes");
 
@@ -16,6 +17,7 @@ router.use("/lession", quiz);
 router.use("/watching", watching);
 router.use("/cart", cart);
 router.use("/payment", payment);
+router.use("/account", account);
 
 router.use("/admin/khoahoc", khoahoc);
 
