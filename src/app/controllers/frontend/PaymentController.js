@@ -1,7 +1,6 @@
 const Database = require("../../config/database");
 const moment = require("moment");
 
-
 class HomeController {
   constructor() {
     this.db = Database;
@@ -49,6 +48,7 @@ class HomeController {
         ]);
       }
 
+      req.session.cart = [];
       res.status(200).json({
         data: true,
       });
@@ -60,11 +60,104 @@ class HomeController {
       });
     }
   };
-  // const { method } = req.body;
 
-  // if (method === "vnpay") {
+  addToCollection = async (req, res) => {
+    try {
+      const user = req.session.user || [];
+      const manguoidung = 2;
+      let listCart = req.session.cart;
+      if (!listCart) {
+        listCart = [];
+      }
 
-  // }
+      const checkBST = `SELECT * FROM bosuutap where MaNguoiDung = '${manguoidung}'`;
+      const exckBST = await this.db.query(checkBST, []);
+
+      if (exckBST.length > 0) {
+        let isDataValid = true;
+        for (let i = 0; i < listCart.length; i++) {
+          let DCD = {
+            MaBST: exckBST[0].MaBST,
+            MaKhoaHoc: listCart[i].id,
+          };
+
+          const checkDetailBST = `SELECT * FROM chitietbst where MaBST = '${DCD.MaBST}' AND MaKhoaHoc = '${DCD.MaKhoaHoc}'`;
+
+          const excheckDetailBST = await this.db.query(checkDetailBST, []);
+          const date = new Date();
+
+          if (excheckDetailBST.length > 0) {
+            isDataValid = false;
+            break;
+          } else {
+            const qrInsertCTDH = `INSERT INTO chitietbst (MaBST, MaKhoaHoc, NgayThem) VALUES (?, ?, ?)`;
+
+            await this.db.query(qrInsertCTDH, [DCD.MaBST, DCD.MaKhoaHoc, date]);
+          }
+        }
+
+        if (isDataValid) {
+          res.status(200).json({
+            data: true,
+          });
+        } else {
+          res.status(200).json({
+            data: false,
+          });
+        }
+      } else {
+        const qrInsertBST = `INSERT INTO bosuutap (MaNguoiDung) VALUES (?)`;
+
+        const exInsertBST = await this.db.query(qrInsertBST, [manguoidung]);
+
+        if (exInsertBST.insertId) {
+          let isDataValid = true;
+          for (let i = 0; i < listCart.length; i++) {
+            let DCD = {
+              MaBST: exInsertBST.insertId,
+              MaKhoaHoc: listCart[i].id,
+            };
+
+            const checkDetailBST = `SELECT * FROM chitietbst where MaBST = '${DCD.MaBST}' AND MaKhoaHoc = '${DCD.MaKhoaHoc}'`;
+
+            const excheckDetailBST = await this.db.query(checkDetailBST, []);
+            const date = new Date();
+
+            if (excheckDetailBST.length > 0) {
+              isDataValid = false;
+              break;
+            } else {
+              const qrInsertCTDH = `INSERT INTO chitietbst (MaBST, MaKhoaHoc, NgayThem) VALUES (?, ?, ?)`;
+
+              await this.db.query(qrInsertCTDH, [
+                DCD.MaBST,
+                DCD.MaKhoaHoc,
+                date,
+              ]);
+            }
+          }
+
+          if (isDataValid) {
+            res.status(200).json({
+              data: true,
+            });
+          } else {
+            res.status(200).json({
+              data: false,
+            });
+          }
+        }
+      }
+
+      req.session.cart = [];
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
 
   sortObject(obj) {
     let sorted = {};
