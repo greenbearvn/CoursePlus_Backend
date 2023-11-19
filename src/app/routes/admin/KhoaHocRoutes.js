@@ -16,7 +16,20 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+
+router.get("/lists", khoahoc.lists);
+
+router.get("/lists/capdo", khoahoc.getListLevels);
+router.get("/lists/giangvien", khoahoc.getListTeachers);
+router.get("/lists/ctdanhmuc", khoahoc.getListDetailCategory);
+
+router.get("/detail/:id", khoahoc.detail);
+
+
 router.post("/upload", upload.single("image"), khoahoc.uploadImage);
 router.post("/create", khoahoc.create);
+router.post("/delete", khoahoc.delete);
+
+router.post("/update", khoahoc.update);
 
 module.exports = router;

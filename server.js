@@ -12,7 +12,7 @@ const body_parser = require("body-parser");
 
 app.use("/uploads", express.static("uploads"));
 app.use(body_parser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors({origin:"*"}));
 app.use(body_parser.json());
 
 app.use(

@@ -105,6 +105,7 @@ class HomeController {
             data: false,
           });
         }
+        req.session.cart = [];
       } else {
         const qrInsertBST = `INSERT INTO bosuutap (MaNguoiDung) VALUES (?)`;
 
@@ -146,7 +147,9 @@ class HomeController {
               data: false,
             });
           }
+          
         }
+        req.session.cart = [];
       }
 
       req.session.cart = [];
