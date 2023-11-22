@@ -1,6 +1,5 @@
 const Database = require("../../config/database");
 
-
 const bcrypt = require("bcrypt");
 
 class AccountController {
@@ -50,14 +49,15 @@ class AccountController {
     try {
       const nguoidung = req.body;
       const account = nguoidung.user;
-      const sql = `SELECT * FROM nguoidung where Email = '${account.Email}'`;
-      const results = await this.db.query(sql, []);
+  
+      const sql = `SELECT * FROM nguoidung WHERE Email = ?`;
+      const results = await this.db.query(sql, [account.Email]);
       const resUser = results[0];
       const user = req.session.user || [];
-
+  
       if (resUser) {
         const isMatch = await bcrypt.compare(account.MatKhau, resUser.MatKhau);
-
+  
         if (isMatch) {
           const userData = {
             MaNguoiDung: resUser.MaNguoiDung,
@@ -65,14 +65,21 @@ class AccountController {
             Email: resUser.Email,
             Quyen: resUser.Quyen,
           };
-
-          user.push(userData);
-
+  
+          req.session.user = userData;
+  
           return res.status(200).json({
-            data: user,
+            status: true,
+            data: req.session.user,
+          });
+        } else {
+          return res.status(200).json({
+            status: false,
+            data: req.session.user,
           });
         }
       }
+      
       return res.status(404).json({
         error: "User not found",
       });

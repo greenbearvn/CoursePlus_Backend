@@ -32,21 +32,27 @@ app.use("/api", route);
 const io = new Server(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
 io.on("connection", (socket) => {
   socket.on("join_room", (data) => {
     socket.join(data.room);
-    socket.broadcast.to(data.room).emit("user joined");
+    socket.broadcast.to(data.room).emit("user_joined");
   });
 
   socket.on("send_message", (data) => {
-    io.to(data.room).emit("receive_message", data);
+    io.to(data.room).emit("receive_message", {
+      room:data.room,
+      user: data.user,
+      message: data.message,
+    });
   });
 
-  socket.on("disconnect", () => {});
+  socket.on("disconnect", () => {
+    // Handle disconnect event if needed
+  });
 });
 
 server.listen(8000, () => {
