@@ -9,6 +9,7 @@ const payment = require("./frontend/PaymentRoutes");
 const watching = require("./frontend/WatchingRoutes");
 const account = require("./frontend/AccountRoutes");
 const chat = require("./frontend/ChatRoutes");
+const profile = require("./frontend/ProfileRoutes");
 
 const khoahoc = require("./admin/KhoaHocRoutes");
 
@@ -20,6 +21,7 @@ router.use("/cart", cart);
 router.use("/payment", payment);
 router.use("/account", account);
 router.use("/chat", chat);
+router.use("/profile", profile);
 
 router.use("/admin/khoahoc", khoahoc);
 

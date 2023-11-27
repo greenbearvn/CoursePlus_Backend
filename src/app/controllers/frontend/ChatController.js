@@ -1,8 +1,6 @@
 const Database = require("../../config/database");
 
-const bcrypt = require("bcrypt");
-
-class AccountController {
+class ChatController {
   constructor() {
     this.db = Database;
   }
@@ -24,6 +22,38 @@ class AccountController {
       });
     }
   };
+
+  getUserConventions = async (req, res) => {
+    try {
+      const user = 1;
+      if (user) {
+        const getListUsers = `select * from hoithoai inner join nguoidunghoithoai on hoithoai.MaHoiThoai = nguoidunghoithoai.MaHoiThoai where MaNguoiDung = ?`;
+        const exGetListUsers = await this.db.query(getListUsers, [user]);
+
+        if (exGetListUsers) {
+          res.status(200).json({
+            status: true,
+            data: exGetListUsers,
+          });
+        }
+        else{
+          res.status(200).json({
+            status: false,
+            data: exGetListUsers,
+          });
+        }
+
+        // const getImageUser = `select * from nguoidung inner join nguoidunghoithoai on nguoidung.MaNguoiDung = nguoidunghoithoai.MaNguoiDung where MaHoiThoai = ?`
+        // const exGetImageUser = await this.db.query(sql, [user.MaNguoiDung]);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
 }
 
-module.exports = new AccountController();
+module.exports = new ChatController();
