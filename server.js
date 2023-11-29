@@ -38,15 +38,17 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   socket.on("join_room", (data) => {
-    socket.join(data.room);
-    socket.broadcast.to(data.room).emit("user_joined");
+    socket.join(data.MahoiThoai);
+    socket.broadcast.to(data.MahoiThoai).emit("user_joined");
   });
 
   socket.on("send_message", (data) => {
-    io.to(data.room).emit("receive_message", {
-      room:data.room,
-      user: data.user,
-      message: data.message,
+    io.to(data.MahoiThoai).emit("receive_message", {
+      MaHoiThoai: data.MaHoiThoai,
+      MaNguoiDung: data.MaNguoiDung,
+      TenNguoiDung: data.TenNguoiDung,
+      NoiDung: data.NoiDung,
+      ThoiGian: data.ThoiGian
     });
   });
 
