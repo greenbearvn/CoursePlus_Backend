@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 
 const khoahoc = require("../../controllers/admin/KhoaHocController");
+const jwtMiddleware = require("../../middlewares/jwtMiddleware")
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,9 +18,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-router.get("/lists", khoahoc.lists);
+router.get("/lists", jwtMiddleware,khoahoc.lists);
 
-router.get("/lists/capdo", khoahoc.getListLevels);
+router.get("/lists/capdo",jwtMiddleware, khoahoc.getListLevels);
 router.get("/lists/giangvien", khoahoc.getListTeachers);
 router.get("/lists/ctdanhmuc", khoahoc.getListDetailCategory);
 
@@ -28,7 +29,7 @@ router.get("/detail/:id", khoahoc.detail);
 
 router.post("/upload", upload.single("image"), khoahoc.uploadImage);
 router.post("/create", khoahoc.create);
-router.post("/delete", khoahoc.delete);
+router.post("/delete",jwtMiddleware, khoahoc.delete);
 
 router.post("/update", khoahoc.update);
 

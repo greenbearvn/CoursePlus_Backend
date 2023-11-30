@@ -1,5 +1,6 @@
 const Database = require("../../config/database");
 
+
 class KhoaHocController {
   constructor() {
     this.db = Database;

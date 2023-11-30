@@ -6,11 +6,11 @@ const config = {
       username: process.env.DB_USERNAME || 'hungdx',
       password: process.env.DB_PASSWORD || '2352002',
       database: process.env.DB_NAME || 'doan4',
+    },
+    jwt: {
+      secret: process.env.JWT_SECRET || 'heu bam lan anh',
+      expiresIn: process.env.JWT_EXPIRES_IN || '24h',
     }
-    // jwt: {
-    //   secret: process.env.JWT_SECRET || 'heu bam lan anh',
-    //   expiresIn: process.env.JWT_EXPIRES_IN || '24h',
-    // }
   };
   
   module.exports = config;

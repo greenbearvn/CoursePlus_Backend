@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+
+const authenticate = require("../middlewares/authMiddleware")
+
+//client
 const home = require("./frontend/HomeRoutes");
 const detail = require("./frontend/DetailRoutes");
 const quiz = require("./frontend/QuizRoutes");
@@ -10,7 +14,7 @@ const watching = require("./frontend/WatchingRoutes");
 const account = require("./frontend/AccountRoutes");
 const chat = require("./frontend/ChatRoutes");
 const profile = require("./frontend/ProfileRoutes");
-
+// admin
 const khoahoc = require("./admin/KhoaHocRoutes");
 
 router.use("/home", home);
@@ -23,6 +27,6 @@ router.use("/account", account);
 router.use("/chat", chat);
 router.use("/profile", profile);
 
-router.use("/admin/khoahoc", khoahoc);
+router.use("/admin/khoahoc",authenticate, khoahoc);
 
 module.exports = router;
