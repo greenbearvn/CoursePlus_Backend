@@ -28,7 +28,7 @@ class KhoaHocController {
     try {
       const { id } = req.params;
 
-      const sql = `SELECT khoahoc.* from khoahoc where '${id}'`;
+      const sql = `SELECT khoahoc.* from khoahoc where id = '${id}'`;
       const data = await this.db.query(sql, []);
       if (data) {
         res.status(200).json({

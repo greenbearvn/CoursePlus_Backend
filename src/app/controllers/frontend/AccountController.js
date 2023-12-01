@@ -7,16 +7,14 @@ class AccountController {
     this.db = Database;
   }
 
-
   getUserSession = async (req, res) => {
     try {
-      const user = req.session.user || {}
-      if(user != {}){
+      const user = req.session.user || {};
+      if (user != {}) {
         res.status(200).json({
           data: user,
         });
-      }
-      else{
+      } else {
         res.status(200).json({
           data: user,
         });
