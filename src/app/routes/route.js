@@ -16,6 +16,7 @@ const chat = require("./frontend/ChatRoutes");
 const profile = require("./frontend/ProfileRoutes");
 // admin
 const khoahoc = require("./admin/KhoaHocRoutes");
+const hoadon  = require("../routes/admin/HoaDonRoutes")
 
 router.use("/home", home);
 router.use("/product", detail);
@@ -27,6 +28,8 @@ router.use("/account", account);
 router.use("/chat", chat);
 router.use("/profile", profile);
 
-router.use("/admin/khoahoc",authenticate, khoahoc);
+// router.use("/admin/khoahoc",authenticate, khoahoc);
+router.use("/admin/khoahoc", khoahoc);
+router.use("/admin/hoadon", hoadon);
 
 module.exports = router;

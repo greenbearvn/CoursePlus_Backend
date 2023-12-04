@@ -13,7 +13,7 @@ class HomeController {
       const date = new Date();
 
       let total = 0;
-      let listCart = req.session.cart;
+      const listCart = req.session.cart;
       if (!listCart) {
         listCart = [];
       }

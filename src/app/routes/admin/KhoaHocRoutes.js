@@ -18,7 +18,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-router.get("/lists", jwtMiddleware,khoahoc.lists);
+// router.get("/lists", jwtMiddleware,khoahoc.lists);
+router.get("/lists", khoahoc.lists);
 
 router.get("/lists/capdo",jwtMiddleware, khoahoc.getListLevels);
 router.get("/lists/giangvien",jwtMiddleware, khoahoc.getListTeachers);
