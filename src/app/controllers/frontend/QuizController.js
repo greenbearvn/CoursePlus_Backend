@@ -5,6 +5,26 @@ class QuizController {
     this.db = Database;
   }
 
+  getTest = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const sql = `SELECT * FROM baikiemtra where MaBaiKT  = '${id}'`;
+      const results = await this.db.query(sql, []);
+
+      if (results.length > 0) {
+        res.status(200).json({
+          data: results[0],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
   getdata = async (req, res) => {
     try {
       const { id } = req.params;
@@ -26,8 +46,6 @@ class QuizController {
         // Add choices to the question object
         question.choices = questionChoices;
       }
-
-      
 
       res.status(200).json({
         data: results,
@@ -59,6 +77,40 @@ class QuizController {
         res.status(200).json({
           Diem: 0,
           Dung: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  saveTested = async (req, res) => {
+    try {
+      const bailam = req.body;
+
+      const user = req.session.user || [];
+
+      const qrInserTested = `INSERT INTO bailam (MaNguoiDung, MaBaiKT, ThoiGianNop, DiemSo)
+        VALUES (?, ?, ?, ?)`;
+
+      const ex = await this.db.query(qrInserTested, [
+        user.MaNguoiDung,
+        bailam.MaBaiKT,
+        bailam.ThoiGianNop,
+        bailam.DiemSo,
+      ]);
+
+      if (ex.insertId > 0) {
+        res.status(200).json({
+          alert: "Ghi điểm thành công!",
+        });
+      } else {
+        res.status(200).json({
+          alert: "Ghi điểm không thành công!",
         });
       }
     } catch (error) {

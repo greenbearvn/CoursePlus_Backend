@@ -14,6 +14,7 @@ const watching = require("./frontend/WatchingRoutes");
 const account = require("./frontend/AccountRoutes");
 const chat = require("./frontend/ChatRoutes");
 const profile = require("./frontend/ProfileRoutes");
+const blog = require("./frontend/BlogFrontendRoutes");
 // admin
 const khoahoc = require("./admin/KhoaHocRoutes");
 const hoadon  = require("../routes/admin/HoaDonRoutes")
@@ -27,6 +28,7 @@ router.use("/payment", payment);
 router.use("/account", account);
 router.use("/chat", chat);
 router.use("/profile", profile);
+router.use("/blog", blog);
 
 // router.use("/admin/khoahoc",authenticate, khoahoc);
 router.use("/admin/khoahoc", khoahoc);

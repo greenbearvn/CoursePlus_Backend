@@ -180,6 +180,8 @@ class HomeController {
 
   transaction = async (req, res) => {
     try {
+
+      const {bankCode, content} = req.body;
       let total = 0;
       let listCart = req.session.cart;
       if (!listCart) {
@@ -209,9 +211,9 @@ class HomeController {
       let orderId = moment(date).format("DDHHmmss");
 
       var amount = total;
-      var bankCode = "NCB";
+      
 
-      var orderInfo = "Noi dung thanh toan";
+      var orderInfo = content;
       var orderType = "billpayment";
       var locale = "vn";
       if (locale === null || locale === "" || locale === "vn") {

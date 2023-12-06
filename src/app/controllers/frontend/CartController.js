@@ -28,7 +28,6 @@ class CartController {
     try {
       const {
         id,
-   
         TenKhoaHoc,
         MaGiangVien,
         GiaMoi,
@@ -37,6 +36,8 @@ class CartController {
         TenCapDo,
         TenGiangVien,
         TenCTDM,
+        GiaCu,
+        AnhKhoaHoc
       } = req.body.cart;
 
       if (!req.session.cart) {
@@ -59,7 +60,6 @@ class CartController {
       if (count === 0) {
         const cartData = {
           id: id,
-          
           TenKhoaHoc: TenKhoaHoc,
           MaGiangVien: MaGiangVien,
           GiaMoi: GiaMoi,
@@ -67,7 +67,9 @@ class CartController {
           ThoiLuongKhoaHoc: ThoiLuongKhoaHoc,
           TenCapDo: TenCapDo,
           TenGiangVien: TenGiangVien,
-          TenCTDM: TenCTDM
+          TenCTDM: TenCTDM,
+          GiaCu: GiaCu,
+          AnhKhoaHoc: AnhKhoaHoc
         };
         req.session.cart.push(cartData);
         res.status(200).json({
@@ -119,6 +121,7 @@ class CartController {
   totalMoney = async (req, res) => {
     try {
       let total = 0;
+      let count = 0;
       let listCart = req.session.cart;
       if (!listCart) {
         listCart = [];
@@ -126,10 +129,12 @@ class CartController {
 
       for (let i = 0; i < listCart.length; i++) {
         total += listCart[i].GiaMoi;
+        count +=1;
       }
 
       res.status(200).json({
         data: total,
+        count:count
       });
     } catch (error) {
       console.error(error);
