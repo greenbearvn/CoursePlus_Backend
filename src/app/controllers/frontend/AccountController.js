@@ -113,6 +113,29 @@ class AccountController {
     }
   };
 
+  getUser = async (req, res) => {
+    try {
+      const nguoidung = req.session.user || {};
+      if (Object.keys(nguoidung).length !== 0) {
+        return res.status(200).json({
+          status: true,
+          data: nguoidung,
+        });
+      } else {
+        return res.status(200).json({
+          status: true,
+          data: nguoidung,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
   authen = async (req, res) => {
     try {
       const nguoidung = req.body;

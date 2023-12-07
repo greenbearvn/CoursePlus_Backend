@@ -94,6 +94,76 @@ class BlogFrontendController {
       });
     }
   };
+
+  uploadImage = async (req, res) => {
+    try {
+      const fileName = req.file ? req.file.filename : "";
+      const fileurl = "http://127.0.0.1:8000/uploads/" + fileName;
+
+      res.json({ fileurl });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  create = async (req, res) => {
+    try {
+      const blog = req.body;
+      blog.NgayDang = new Date();
+      const query = `INSERT INTO blog (TenBaiViet, NoiDung, AnhMinhHoa,NgayDang,MaDanhMuc,MaNguoiDung,TrangThai)
+        VALUES (?, ?, ?,?, ?, ?,?)`;
+
+      const excute = await this.db.query(query, [
+        blog.TenBaiViet,
+        blog.NoiDung,
+        blog.AnhMinhHoa,
+        blog.NgayDang,
+        blog.MaDanhMuc,
+        blog.MaNguoiDung,
+        blog.TrangThai,
+      ]);
+
+      if (excute.insertId) {
+        res.status(200).json({
+          data: true,
+        });
+      } else {
+        res.status(200).json({
+          data: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  detail = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const query = `SELECT * FROM blog where MaBaiViet = ?`;
+      const excute = await this.db.query(query, [id]);
+
+      if (excute) {
+        res.status(200).json({
+          data: excute[0],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
 }
 
 module.exports = new BlogFrontendController();
