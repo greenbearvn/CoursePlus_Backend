@@ -116,20 +116,51 @@ class AccountController {
   getUser = async (req, res) => {
     try {
       const nguoidung = req.session.user || {};
+
       if (Object.keys(nguoidung).length !== 0) {
-        return res.status(200).json({
-          status: true,
-          data: nguoidung,
-        });
+        if (nguoidung.MaNguoiDung > 0) {
+          const sql = `SELECT * FROM nguoidung inner join giangvien on nguoidung.MaNguoiDung = giangvien.MaHoSo WHERE nguoidung.MaNguoiDung = ?`;
+          const results = await this.db.query(sql, [nguoidung.MaNguoiDung]);
+          return res.status(200).json({
+            status: true,
+            profile: results[0],
+            data:nguoidung
+          });
+        } else {
+          return res.status(200).json({
+            status: false,
+            data: nguoidung,
+          });
+        }
       } else {
         return res.status(200).json({
-          status: true,
+          status: false,
           data: nguoidung,
         });
       }
     } catch (error) {
       console.error(error);
       res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+   logout = async (req, res) => {
+    try {
+      const nguoidung = req.session.user || {};
+  
+      if (Object.keys(nguoidung).length !== 0) {
+        req.session.destroy();
+      }
+  
+      return res.status(200).json({
+        status: false,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
         ok: false,
         error: "Something went wrong!",
       });

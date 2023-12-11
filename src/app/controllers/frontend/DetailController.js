@@ -22,8 +22,8 @@ class HomeController {
       GiaMoi,
       capdo.MaCapDo,
       capdo.TenCapDo,
-      giangvien.MaGiangVien,
-      giangvien.TenGiangVien,
+      giangvien.MaHoSo,
+      giangvien.TenHoSo,
       chitietdanhmuc.MaCTDM,
       chitietdanhmuc.TenCTDM
   FROM
@@ -31,7 +31,7 @@ class HomeController {
   INNER JOIN
       capdo ON khoahoc.MaCapDo = capdo.MaCapDo
   INNER JOIN
-      giangvien ON khoahoc.MaGiangVien = giangvien.MaGiangVien
+      giangvien ON khoahoc.MaGiangVien = giangvien.MaHoSo
   INNER JOIN
       chitietdanhmuc ON khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM
   WHERE
@@ -121,7 +121,7 @@ class HomeController {
 
       const teacherId = exGetId[0].MaGiangVien;
 
-      const getInfor = `select *, danhmuc.tendm from giangvien inner join danhmuc on giangvien.MaDanhMuc = danhmuc.madm where MaGiangVien = ?`;
+      const getInfor = `select *, danhmuc.tendm from giangvien inner join danhmuc on giangvien.MaDanhMuc = danhmuc.madm where MaHoSo = ?`;
 
       const ExGetInfor = await this.db.query(getInfor, [teacherId]);
 

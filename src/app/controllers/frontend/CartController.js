@@ -34,7 +34,7 @@ class CartController {
         MaCapDo,
         ThoiLuongKhoaHoc,
         TenCapDo,
-        TenGiangVien,
+        TenHoSo,
         TenCTDM,
         GiaCu,
         AnhKhoaHoc
@@ -66,7 +66,7 @@ class CartController {
           MaCapDo: MaCapDo,
           ThoiLuongKhoaHoc: ThoiLuongKhoaHoc,
           TenCapDo: TenCapDo,
-          TenGiangVien: TenGiangVien,
+          TenHoSo: TenHoSo,
           TenCTDM: TenCTDM,
           GiaCu: GiaCu,
           AnhKhoaHoc: AnhKhoaHoc

@@ -9,7 +9,7 @@ class ProfileController {
     try {
       const { id } = req.params;
       const uscon2 = req.session.user || {};
-      const query = `select giangvien.*, nguoidung.* from giangvien inner join nguoidung on giangvien.MaGiangVien = nguoidung.MaNguoiDung where  MaGiangVien = ?;`;
+      const query = `select giangvien.*, nguoidung.* from giangvien inner join nguoidung on giangvien.MaHoSo = nguoidung.MaNguoiDung where  MaHoSo = ?;`;
 
       const execute = await this.db.query(query, [id]);
 
@@ -37,12 +37,10 @@ class ProfileController {
       const getUs1 = `SELECT MaHoiThoai FROM nguoidunghoithoai WHERE MaNguoiDung = ?`;
 
       const exGetUs1 = await this.db.query(getUs1, [uscon1.MaNguoiDung]);
-      
 
       const getUs2 = `SELECT MaHoiThoai FROM nguoidunghoithoai WHERE MaNguoiDung = ?`;
 
       const exGetUs2 = await this.db.query(getUs2, [uscon2.MaNguoiDung]);
-    
 
       if (exGetUs2.length > 0 && exGetUs1.length > 0) {
         res.status(200).json({

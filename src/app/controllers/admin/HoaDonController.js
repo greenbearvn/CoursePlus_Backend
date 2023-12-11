@@ -154,7 +154,7 @@ class HoaDonController {
   getListDetailBill = async (req, res) => {
     try {
       const { id } = req.params;
-      const sql = `SELECT * from chitietdonhang inner join khoahoc on chitietdonhang.MaKhoaHoc = khoahoc.id inner join giangvien on chitietdonhang.MaGiangVien = giangvien.MaGiangVien inner join capdo on chitietdonhang.MaCapDo = capdo.MaCapDo where MaDonHang = ?`;
+      const sql = `SELECT * from chitietdonhang inner join khoahoc on chitietdonhang.MaKhoaHoc = khoahoc.id inner join giangvien on chitietdonhang.MaGiangVien = giangvien.MaHoSo inner join capdo on chitietdonhang.MaCapDo = capdo.MaCapDo where MaDonHang = ?`;
       const results = await this.db.query(sql, [id]);
       if (results) {
         res.status(200).json({
@@ -179,7 +179,7 @@ class HoaDonController {
         donhang.MaKhoaHoc,
       ]);
 
-      const sql = `SELECT * from chitietdonhang inner join khoahoc on chitietdonhang.MaKhoaHoc = khoahoc.id inner join giangvien on chitietdonhang.MaGiangVien = giangvien.MaGiangVien inner join capdo on chitietdonhang.MaCapDo = capdo.MaCapDo where MaDonHang = ?`;
+      const sql = `SELECT * from chitietdonhang inner join khoahoc on chitietdonhang.MaKhoaHoc = khoahoc.id inner join giangvien on chitietdonhang.MaGiangVien = giangvien.MaHoSo inner join capdo on chitietdonhang.MaCapDo = capdo.MaCapDo where MaDonHang = ?`;
       const results = await this.db.query(sql, [donhang.MaDonHang]);
       if (exDelQr.affectedRows > 0) {
         res.status(200).json({
@@ -277,87 +277,6 @@ class HoaDonController {
       });
     }
   };
-
-  // update = async (req, res) => {
-  //   try {
-  //     const { MaDonHang, MaNguoiDung, NgayLap, Tongtien } = req.query;
-  //     const listCart = req.body;
-
-  //     const query = `UPDATE donhang SET
-  //                     MaNguoiDung = ?,
-  //                     NgayLap = ?,
-  //                     Tongtien = ?
-  //                 WHERE MaDonHang = ?`;
-
-  //     const excute = await this.db.query(query, [
-  //       MaNguoiDung,
-  //       NgayLap,
-  //       Tongtien,
-  //       MaDonHang,
-  //     ]);
-
-  //     if (excute.affectedRows > 0) {
-  //       for (let i = 0; i < listCart.length; i++) {
-  //         let cartData = {
-  //           MaDonHang: MaDonHang,
-  //           MaKhoaHoc: listCart[i].id,
-  //           MaGiangVien: listCart[i].MaGiangVien,
-  //           MaCapDo: listCart[i].MaCapDo,
-  //           Gia: listCart[i].GiaMoi,
-  //         };
-
-  //         const checkAdded = `SELECT MaKhoaHoc FROM chitietdonhang INNER JOIN donhang ON chitietdonhang.MaDonHang = donhang.MaDonHang WHERE MaNguoiDung = ? AND MaKhoaHoc = ?`;
-  //         const exCheckAdded = await this.db.query(checkAdded, [
-  //           MaNguoiDung,
-  //           cartData.MaKhoaHoc,
-  //         ]);
-
-  //         if (exCheckAdded.length > 0) {
-  //           return res.status(200).json({
-  //             data: "Khóa học đã được mua trước đó không được mua nữa",
-  //           });
-  //         } else {
-  //           const checExist = `SELECT MaDonHang FROM chitietdonhang  WHERE MaDonHang = ? AND MaKhoaHoc = ?`;
-  //           const exCheckAdded = await this.db.query(checExist, [
-  //             MaDonHang,
-  //             cartData.MaKhoaHoc,
-  //           ]);
-
-  //           if (exCheckAdded.length > 0) {
-  //             return res.status(200).json({
-  //               data: "Khóa học đã tồn tại trong đơn hàng",
-  //             });
-  //           } else {
-  //             const qrInsertCTDH = `INSERT INTO chitietdonhang (MaDonHang, MaKhoaHoc, MaGiangVien, MaCapDo, Gia)
-  //             VALUES (?, ?, ?, ?, ?)`;
-
-  //             const excuteInsertCTDH = await this.db.query(qrInsertCTDH, [
-  //               cartData.MaDonHang,
-  //               cartData.MaKhoaHoc,
-  //               cartData.MaGiangVien,
-  //               cartData.MaCapDo,
-  //               cartData.Gia,
-  //             ]);
-
-  //             return res.status(200).json({
-  //               data: "Thêm thành công",
-  //             });
-  //           }
-  //         }
-  //       }
-  //     } else {
-  //       return res.status(200).json({
-  //         data: "Lỗi kết nối với cơ sở dữ liệu",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({
-  //       ok: false,
-  //       error: "Something went wrong!",
-  //     });
-  //   }
-  // };
 }
 
 module.exports = new HoaDonController();

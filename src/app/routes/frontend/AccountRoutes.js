@@ -8,6 +8,7 @@ router.post("/register", nguoidung.register);
 router.post("/login", nguoidung.login);
 
 router.post("/authen", nguoidung.authen);
-router.get("/getUser", nguoidung.getUserSession);
+router.get("/getUser", nguoidung.getUser);
+router.post("/logout", nguoidung.logout);
 
 module.exports = router;

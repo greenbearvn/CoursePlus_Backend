@@ -16,7 +16,6 @@ class BlogFrontendController {
         INNER JOIN danhmuc ON chitietdanhmuc.madm = danhmuc.madm
         INNER JOIN nguoidung ON blog.MaNguoiDung = nguoidung.MaNguoiDung
         where danhmuc.madm = ? 
-        ORDER BY blog.MaBaiViet
         LIMIT ?`;
         const results = await this.db.query(sql, [
           filter.cateId,
@@ -35,7 +34,6 @@ class BlogFrontendController {
         INNER JOIN danhmuc ON chitietdanhmuc.madm = danhmuc.madm
         INNER JOIN nguoidung ON blog.MaNguoiDung = nguoidung.MaNguoiDung
         where chitietdanhmuc.MaCTDM  = ? 
-        ORDER BY blog.MaBaiViet
         LIMIT ?`;
         const results = await this.db.query(sql, [
           filter.cateId,
@@ -53,7 +51,6 @@ class BlogFrontendController {
         INNER JOIN chitietdanhmuc ON blog.MaDanhMuc = chitietdanhmuc.MaCTDM
         INNER JOIN danhmuc ON chitietdanhmuc.madm = danhmuc.madm
         INNER JOIN nguoidung ON blog.MaNguoiDung = nguoidung.MaNguoiDung
-        ORDER BY blog.MaBaiViet
         LIMIT ?`;
         const results = await this.db.query(sql, [filter.records]);
         if (results) {

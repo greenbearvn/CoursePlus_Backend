@@ -1,6 +1,5 @@
 const Database = require("../../config/database");
 
-
 class KhoaHocController {
   constructor() {
     this.db = Database;
@@ -8,7 +7,7 @@ class KhoaHocController {
 
   lists = async (req, res) => {
     try {
-      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenGiangVien, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaGiangVien inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM `;
+      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenHoSo, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaHoSo inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM `;
       const results = await this.db.query(sql, []);
       if (results) {
         res.status(200).json({
@@ -166,7 +165,7 @@ class KhoaHocController {
       const del = `DELETE FROM khoahoc WHERE id = '${khoahoc.id}'`;
       const exDel = await this.db.query(del, []);
 
-      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenGiangVien, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaGiangVien inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM`;
+      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenHoSo, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaHoSo inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM`;
       const data = await this.db.query(sql, []);
 
       if (data) {
@@ -223,7 +222,7 @@ class KhoaHocController {
         khoahoc.id,
       ]);
 
-      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenGiangVien, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaGiangVien inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM`;
+      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenHoSo, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaHoSo inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM`;
       const data = await this.db.query(sql, []);
 
       res.status(200).json({
