@@ -23,6 +23,9 @@ const hoadon  = require("../routes/admin/HoaDonRoutes")
 const nguoidung  = require("../routes/admin/NguoiDungRoutes")
 const lession  = require("../routes/admin/LessionRoutes")
 const video  = require("../routes/admin/VideoRoutes")
+const detailCate  = require("../routes/admin/DetailCategoryRoutes")
+const cate  = require("../routes/admin/CategoryRoutes")
+
 
 router.use("/home", home);
 router.use("/product", detail);
@@ -43,5 +46,7 @@ router.use("/admin/hoadon", hoadon);
 router.use("/admin/nguoidung",  nguoidung);
 router.use("/admin/lession",  lession);
 router.use("/admin/video",  video);
+router.use("/admin/category",  cate);
+router.use("/admin/detail-category",  detailCate);
 
 module.exports = router;
