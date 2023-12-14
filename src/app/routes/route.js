@@ -17,6 +17,7 @@ const profile = require("./frontend/ProfileRoutes");
 const blog = require("./frontend/BlogFrontendRoutes");
 const category = require("./frontend/CategoryRoutes");
 const collection = require("./frontend/CollectionRoutes");
+
 // admin
 const khoahoc = require("./admin/KhoaHocRoutes");
 const hoadon  = require("../routes/admin/HoaDonRoutes")
@@ -25,6 +26,8 @@ const lession  = require("../routes/admin/LessionRoutes")
 const video  = require("../routes/admin/VideoRoutes")
 const detailCate  = require("../routes/admin/DetailCategoryRoutes")
 const cate  = require("../routes/admin/CategoryRoutes")
+const convention  = require("../routes/admin/ConventionRoutes")
+const test  = require("../routes/admin/TestRoutes")
 
 
 router.use("/home", home);
@@ -48,5 +51,7 @@ router.use("/admin/lession",  lession);
 router.use("/admin/video",  video);
 router.use("/admin/category",  cate);
 router.use("/admin/detail-category",  detailCate);
+router.use("/admin/convention",  convention);
+router.use("/admin/test",  test);
 
 module.exports = router;

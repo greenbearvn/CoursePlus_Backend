@@ -61,21 +61,27 @@ class QuizController {
 
   checkAnswer = async (req, res) => {
     try {
-      const { macauhoi, sochon } = req.body;
+      const  choice  = req.body;
 
-      const checked = `SELECT * FROM cauhoi where MaCauHoi = '${macauhoi}' and DapAn = '${sochon}'`;
-      const abc = await this.db.query(checked, []);
 
-      if (abc[0]) {
-        if (macauhoi == abc[0].MaCauHoi && sochon == abc[0].DapAn) {
+      const checked = `SELECT * FROM luachon where MaLuaChon = ? `;
+      const abc = await this.db.query(checked, [choice.MaLuaChon]);
+
+      if (abc[0].Dung === 1) {
+        const getQuesion = `SELECT * FROM cauhoi where MaCauHoi = ? `;
+        const exGetQuestion = await this.db.query(getQuesion, [
+          abc[0].MaCauHoi,
+        ]);
+
+        if (exGetQuestion.length > 0) {
           res.status(200).json({
-            Diem: abc[0].Diem,
+           
             Dung: true,
           });
         }
       } else {
         res.status(200).json({
-          Diem: 0,
+   
           Dung: false,
         });
       }
