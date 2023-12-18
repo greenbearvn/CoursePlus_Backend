@@ -162,6 +162,140 @@ class VideoController {
       });
     }
   };
+
+  
+
+  updateTest = async (req, res) => {
+    try {
+      const test = req.body;
+    
+      const updateTestQuery = `
+        UPDATE baikiemtra
+        SET TenBaiKT = ?, MoTaBaiKT = ?, MaGiangVien = ?, MaVideo = ?
+        WHERE MaBaiKT = ?
+      `;
+
+      const exUpdateTest = await this.db.query(updateTestQuery, [
+        test.TenBaiKT,
+        test.MoTaBaiKT,
+        test.MaGiangVien,
+        test.MaVideo,
+        test.MaBaiKT,
+      ]);
+
+      for (let i = 0; i < test.Questions.length; i++) {
+        const q = test.Questions[i];
+
+        const getQuestionQuery = `
+          SELECT * FROM cauhoi
+          WHERE MaCauhoi = ? AND MaBaiKT = ?
+        `;
+        const exGetQuestion = await this.db.query(getQuestionQuery, [
+          q.MaCauHoi,
+          test.MaBaiKT
+        ]);
+      
+
+        if (exGetQuestion.length <= 0) {
+          const insertQuestionQuery = `
+            INSERT INTO cauhoi(MaBaiKT, MoTaCauHoi, GoiY)
+            VALUES (?, ?, ?)
+          `;
+          const exInsertQuestion = await this.db.query(insertQuestionQuery, [
+            test.MaBaiKT,
+            q.MoTaCauHoi,
+            q.GoiY,
+          ]);
+
+          for (let j = 0; j < q.Choices.length; j++) {
+            const c = q.Choices[j];
+
+            const getChoicesQuery = `
+              SELECT * FROM luachon
+              WHERE MaCauHoi = ? AND MaLuaChon = ?
+            `;
+            const exGetChoices = await this.db.query(getChoicesQuery, [
+              exInsertQuestion.insertId,
+              c.MaLuaChon,
+            ]);
+
+            if (exGetChoices.length <= 0) {
+              const insertChoiceQuery = `
+                INSERT INTO luachon (MaCauHoi, NoiDung, Dung)
+                VALUES (?, ?, ?)
+              `;
+              const exInsertChoice = await this.db.query(insertChoiceQuery, [
+                exInsertQuestion.insertId,
+                c.NoiDung,
+                c.Dung,
+              ]);
+
+              if (!exInsertChoice.insertId) {
+                return res.status(500).json({
+                  ok: false,
+                  error: "Failed to insert choices",
+                });
+              }
+            }
+          }
+        }
+      }
+
+      return res.status(200).json({
+        ok: true,
+        data: true,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  updateProfile = async (req, res) => {
+    try {
+      const profile = req.body;
+
+      const query = `UPDATE giangvien SET
+                    TenHoSo = ?,
+                    Email = ?,
+                    SoDienThoai = ?,
+                    AnhDaiDien = ?,
+                    MoTa = ?,
+                    MaDanhMuc  = ?,
+                    GiangVien  = ?
+                  WHERE MaHoSo  = ?`;
+
+      const excute = await this.db.query(query, [
+        profile.TenHoSo,
+        profile.Email,
+        profile.SoDienThoai,
+        profile.AnhDaiDien,
+        profile.MoTa,
+        profile.MaDanhMuc,
+        profile.GiangVien,
+        profile.MaHoSo,
+      ]);
+
+      if (excute.affectedRows > 0) {
+        res.status(200).json({
+          status: true,
+        });
+      } else {
+        res.status(200).json({
+          status: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
 }
 
 module.exports = new VideoController();

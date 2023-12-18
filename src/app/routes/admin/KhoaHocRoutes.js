@@ -8,8 +8,8 @@ const jwtMiddleware = require("../../middlewares/jwtMiddleware")
 
 const upload = require("../../middlewares/uploadImgMiddleware")
 
-router.get("/lists", jwtMiddleware,khoahoc.lists);
-// router.get("/lists", khoahoc.lists);
+// router.get("/lists", jwtMiddleware,khoahoc.lists);
+router.get("/lists", khoahoc.lists);
 
 router.get("/lists/capdo",jwtMiddleware, khoahoc.getListLevels);
 router.get("/lists/giangvien",jwtMiddleware, khoahoc.getListTeachers);
