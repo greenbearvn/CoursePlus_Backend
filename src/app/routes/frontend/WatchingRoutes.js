@@ -7,5 +7,6 @@ router.get("/video/detail/:id", watching.getVideo);
 
 router.get("/video/questions/:mavideo", watching.getQuestions);
 
+router.get("/video/all/tests/:id", watching.getAllTests);
 
 module.exports = router;

@@ -10,6 +10,7 @@ class AccountController {
   getUserSession = async (req, res) => {
     try {
       const user = req.session.user || {};
+      // console.log(user);
       if (user != {}) {
         res.status(200).json({
           data: user,
@@ -100,7 +101,6 @@ class AccountController {
           });
         }
       }
-
       return res.status(404).json({
         error: "User not found",
       });
@@ -115,29 +115,25 @@ class AccountController {
 
   getUser = async (req, res) => {
     try {
-      const nguoidung = req.session.user || {};
+      const nguoidung = req.session.user;
 
-      if (Object.keys(nguoidung).length !== 0) {
-        if (nguoidung.MaNguoiDung > 0) {
-          const sql = `SELECT * FROM nguoidung inner join giangvien on nguoidung.MaNguoiDung = giangvien.MaHoSo WHERE nguoidung.MaNguoiDung = ?`;
-          const results = await this.db.query(sql, [nguoidung.MaNguoiDung]);
+      if (nguoidung && nguoidung.MaNguoiDung > 0) {
+        const sql = `SELECT * FROM nguoidung  WHERE nguoidung.MaNguoiDung = ?`;
+        const results = await this.db.query(sql, [nguoidung.MaNguoiDung]);
+
+        if (results && results.length > 0) {
           return res.status(200).json({
             status: true,
             profile: results[0],
-            data:nguoidung
-          });
-        } else {
-          return res.status(200).json({
-            status: false,
             data: nguoidung,
           });
         }
-      } else {
-        return res.status(200).json({
-          status: false,
-          data: nguoidung,
-        });
       }
+
+      return res.status(200).json({
+        status: false,
+        data: nguoidung,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({
@@ -147,14 +143,14 @@ class AccountController {
     }
   };
 
-   logout = async (req, res) => {
+  logout = async (req, res) => {
     try {
       const nguoidung = req.session.user || {};
-  
+
       if (Object.keys(nguoidung).length !== 0) {
         req.session.destroy();
       }
-  
+
       return res.status(200).json({
         status: false,
       });
@@ -174,45 +170,42 @@ class AccountController {
       const sql = `SELECT * FROM nguoidung WHERE Email = ?`;
       const results = await this.db.query(sql, [nguoidung.Email]);
 
+      if (results.length === 0) {
+        return res.status(404).json({
+          error: "User not found",
+        });
+      }
+
       const resUser = results[0];
 
       let token = "";
 
-      if (resUser.Quyen == "admin") {
+      if (resUser.Quyen === "admin") {
         token = generateToken(resUser);
       }
 
-      if (resUser) {
-        const isMatch = await bcrypt.compare(
-          nguoidung.MatKhau,
-          resUser.MatKhau
-        );
+      const isMatch = await bcrypt.compare(nguoidung.MatKhau, resUser.MatKhau);
 
-        if (isMatch) {
-          const userData = {
-            MaNguoiDung: resUser.MaNguoiDung,
-            TenNguoiDung: resUser.TenNguoiDung,
-            Email: resUser.Email,
-            Quyen: resUser.Quyen,
-            Token: token,
-          };
-          req.session.user = userData;
+      if (isMatch) {
+        const userData = {
+          MaNguoiDung: resUser.MaNguoiDung,
+          TenNguoiDung: resUser.TenNguoiDung,
+          Email: resUser.Email,
+          Quyen: resUser.Quyen,
+          Token: token,
+        };
+        req.session.user = userData;
 
-          return res.status(200).json({
-            status: true,
-            data: req.session.user,
-          });
-        } else {
-          return res.status(200).json({
-            status: false,
-            data: req.session.user,
-          });
-        }
+        return res.status(200).json({
+          status: true,
+          data: req.session.user,
+        });
+      } else {
+        return res.status(200).json({
+          status: false,
+          data: req.session.user,
+        });
       }
-
-      return res.status(404).json({
-        error: "User not found",
-      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({

@@ -8,8 +8,8 @@ class HomeController {
 
   saveToDB = async (req, res) => {
     try {
-      // const { manguoidung } = req.params;
-      const manguoidung = 1;
+      const user = req.session.user;
+      const manguoidung = user.MaNguoiDung;
       const date = new Date();
 
       let total = 0;
@@ -63,8 +63,8 @@ class HomeController {
 
   addToCollection = async (req, res) => {
     try {
-      const user = req.session.user || [];
-      const manguoidung = 2;
+      const user = req.session.user || {};
+      const manguoidung = user.MaNguoiDung;
       let listCart = req.session.cart;
       if (!listCart) {
         listCart = [];
@@ -147,7 +147,6 @@ class HomeController {
               data: false,
             });
           }
-          
         }
         req.session.cart = [];
       }
@@ -180,8 +179,7 @@ class HomeController {
 
   transaction = async (req, res) => {
     try {
-
-      const {bankCode, content} = req.body;
+      const { bankCode, content } = req.body;
       let total = 0;
       let listCart = req.session.cart;
       if (!listCart) {
@@ -211,7 +209,6 @@ class HomeController {
       let orderId = moment(date).format("DDHHmmss");
 
       var amount = total;
-      
 
       var orderInfo = content;
       var orderType = "billpayment";

@@ -7,12 +7,86 @@ class TestController {
 
   list = async (req, res) => {
     try {
-      const sql = `select * from baikiemtra inner join giangvien on baikiemtra.MaGiangVien = giangvien.MaHoSo inner join video on baikiemtra.MaVideo = video.MaVideo order by MaBaiKT DESC`;
-      const results = await this.db.query(sql, []);
+      const { id } = req.params;
+
+      if (id > 0) {
+        const sql = `select * from baikiemtra 
+        inner join giangvien on baikiemtra.MaGiangVien = giangvien.MaHoSo 
+        inner join video on baikiemtra.MaVideo = video.MaVideo 
+        where baikiemtra.MaGiangVien = ? 
+        order by MaBaiKT DESC`;
+        const results = await this.db.query(sql, [id]);
+        if (results) {
+          res.status(200).json({
+            data: results,
+          });
+        }
+      } else {
+        const sql = `select * from baikiemtra 
+        inner join giangvien on baikiemtra.MaGiangVien = giangvien.MaHoSo 
+        inner join video on baikiemtra.MaVideo = video.MaVideo 
+        order by MaBaiKT DESC`;
+        const results = await this.db.query(sql, []);
+        if (results) {
+          res.status(200).json({
+            data: results,
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  listTestOfTeacher = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const sql = `select * from baikiemtra inner join giangvien on baikiemtra.MaGiangVien = giangvien.MaHoSo inner join video on baikiemtra.MaVideo = video.MaVideo where MaGiangVien = ? order by MaBaiKT DESC`;
+      const results = await this.db.query(sql, [id]);
       if (results) {
         res.status(200).json({
           data: results,
         });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  listVideoPage = async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (id > 0) {
+        const sql = `select * from video
+        inner join baihoc on video.MaBaiHoc = baihoc.MaBaiHoc
+        inner join khoahoc on baihoc.MaKhoaHoc = khoahoc.id 
+        where khoahoc.MaGiangVien = ?
+        order by MaVideo DESC`;
+        const results = await this.db.query(sql, [id]);
+        if (results) {
+          res.status(200).json({
+            data: results,
+          });
+        }
+      } else {
+        const sql = `select * from video
+        inner join baihoc on video.MaBaiHoc = baihoc.MaBaiHoc
+        inner join khoahoc on baihoc.MaKhoaHoc = khoahoc.id 
+        order by MaVideo DESC`;
+        const results = await this.db.query(sql, [id]);
+        if (results) {
+          res.status(200).json({
+            data: results,
+          });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -55,7 +129,6 @@ class TestController {
         const test = {
           MaBaiKT: exGetTest[0].MaBaiKT,
           TenBaiKT: exGetTest[0].TenBaiKT,
-          MoTaBaiKT: exGetTest[0].MoTaBaiKT,
           MaGiangVien: exGetTest[0].MaGiangVien,
           MaVideo: exGetTest[0].MaVideo,
           Questions: listQues,
@@ -83,12 +156,12 @@ class TestController {
     try {
       const test = req.body;
 
-      const insertTest = `INSERT INTO baikiemtra (TenBaiKT, MoTaBaiKT, MaGiangVien, MaVideo)
-          VALUES (?, ?, ?, ?)`;
+      const insertTest = `INSERT INTO baikiemtra (TenBaiKT,  MaGiangVien, MaVideo)
+          VALUES (?, ?, ?)`;
 
       const exInsertTest = await this.db.query(insertTest, [
         test.TenBaiKT,
-        test.MoTaBaiKT,
+
         test.MaGiangVien,
         test.MaVideo,
       ]);
@@ -172,7 +245,7 @@ class TestController {
 
   getListVideo = async (req, res) => {
     try {
-      const sql = `SELECT * from video`;
+      const sql = `SELECT video.* from video`;
       const data = await this.db.query(sql, []);
       if (data) {
         res.status(200).json({

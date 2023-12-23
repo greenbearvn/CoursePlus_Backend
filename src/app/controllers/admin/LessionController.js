@@ -9,11 +9,27 @@ class LessionController {
   list = async (req, res) => {
     try {
       const { makhoahoc } = req.params;
-      const sql = `select * from baihoc inner join khoahoc on baihoc.MaKhoaHoc = khoahoc.id where MaKhoaHoc = ? order by MaBaiHoc ASC`;
+      const sql = `SELECT * FROM baihoc INNER JOIN khoahoc ON baihoc.MaKhoaHoc = khoahoc.id WHERE MaKhoaHoc = ? ORDER BY MaBaiHoc ASC`;
       const results = await this.db.query(sql, [makhoahoc]);
-      if (results) {
+
+      if (results.length > 0) {
+        const getVideo = `SELECT baihoc.*, video.* FROM video inner join baihoc on video.MaBaiHoc = baihoc.MaBaiHoc  WHERE baihoc.MaKhoaHoc = ?`;
+        const videos = await this.db.query(getVideo, [makhoahoc]);
+
+        // Add videos to each lesson object
+        const lessonsWithVideos = results.map((lesson) => {
+          const lessonVideos = videos.filter(
+            (video) => video.MaBaiHoc === lesson.MaBaiHoc
+          );
+          return { ...lesson, videos: lessonVideos };
+        });
+
         res.status(200).json({
-          data: results,
+          data: lessonsWithVideos,
+        });
+      } else {
+        res.status(404).json({
+          message: "No lessons found for the given course.",
         });
       }
     } catch (error) {
@@ -23,7 +39,7 @@ class LessionController {
         error: "Something went wrong!",
       });
     }
-  }
+  };
 
   listCourses = async (req, res) => {
     try {

@@ -47,22 +47,19 @@ class CategoryController {
     try {
       const hoithoai = req.body;
 
-      const query = `INSERT INTO hoithoai( TenHoiThoai)
-        VALUES ( ?)`;
+      const query1 = `INSERT INTO hoithoai(TenHoiThoai) VALUES (?)`;
+      const result1 = await this.db.query(query1, [hoithoai.TenHoiThoai]);
 
-      const excute = await this.db.query(query, [hoithoai.TenHoiThoai]);
-
-      if (excute.insertId) {
-        res.status(200).json({
-          status: true,
-          data: excute.insertId,
-        });
-      } else {
-        res.status(200).json({
-          status: false,
-          data: null,
-        });
+      if (result1.insertId > 0) {
+        for (let item of hoithoai.userconventions) {
+          const query2 = `INSERT INTO nguoidunghoithoai(MaNguoiDung, MaHoiThoai) VALUES (?, ?)`;
+          await this.db.query(query2, [item.MaNguoiDung, result1.insertId]);
+        }
       }
+
+      res.status(200).json({
+        data: true,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({
@@ -75,15 +72,15 @@ class CategoryController {
   delete = async (req, res) => {
     try {
       const hoithoai = req.body;
+      const delMes = `DELETE FROM  tinnhan WHERE MaNguoiDung   = ?`;
+      this.db.query(delMes, [hoithoai.MaNguoiDung]);
+      
+
+      const delNDHT = `DELETE FROM  nguoidunghoithoai  WHERE MaHoiThoai  = ?`;
+      await this.db.query(delNDHT, [hoithoai.MaHoiThoai]);
 
       const delHT = `DELETE FROM hoithoai WHERE MaHoiThoai  = ?`;
       const exDelHT = await this.db.query(delHT, [hoithoai.MaHoiThoai]);
-
-      const delNDHT = `DELETE FROM  nguoidunghoithoai WHERE MaHoiThoai  = ?`;
-      const exDelNDHT = await this.db.query(delNDHT, [hoithoai.MaHoiThoai]);
-
-      const delTN = `DELETE FROM  nguoidunghoithoai WHERE MaHoiThoai  = ?`;
-      const exDelTN = await this.db.query(delTN, [hoithoai.MaHoiThoai]);
 
       res.status(200).json({
         status: true,
@@ -103,89 +100,26 @@ class CategoryController {
 
       const query = `UPDATE hoithoai SET
                     TenHoiThoai = ?
-                  WHERE MaHoiThoai   = ?`;
+                  WHERE MaHoiThoai = ?`;
 
-      const excute = await this.db.query(query, [
-        hoithoai.TenHoiThoai,
-        hoithoai.MaHoiThoai,
-      ]);
+      await this.db.query(query, [hoithoai.TenHoiThoai, hoithoai.MaHoiThoai]);
 
-      if (excute.affectedRows > 0) {
-        res.status(200).json({
-          status: true,
-        });
-      } else {
-        res.status(200).json({
-          status: false,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        ok: false,
-        error: "Something went wrong!",
-      });
-    }
-  };
-
-  insertUser = async (req, res) => {
-    try {
-      const listUser = req.body;
-
-      for (let i = 0; i < listCart.length; i++) {
-        let cartData = {
-          MaDonHang: excute.insertId,
-          MaKhoaHoc: listCart[i].id,
-          MaGiangVien: listCart[i].MaGiangVien,
-          MaCapDo: listCart[i].MaCapDo,
-          Gia: listCart[i].GiaMoi,
-        };
-
-        const checkAdded = `SELECT MaKhoaHoc FROM chitietdonhang INNER JOIN donhang ON chitietdonhang.MaDonHang = donhang.MaDonHang WHERE MaNguoiDung = ? AND MaKhoaHoc = ?`;
-        const exCheckAdded = await this.db.query(checkAdded, [
-          MaNguoiDung,
-          cartData.MaKhoaHoc,
+      for (let item of hoithoai.userconventions) {
+        const getUS = `SELECT * FROM nguoidunghoithoai WHERE MaNguoiDung = ? AND MaHoiThoai = ?`;
+        const exgetUS = await this.db.query(getUS, [
+          item.MaNguoiDung,
+          hoithoai.MaHoiThoai,
         ]);
 
-        if (exCheckAdded.length > 0) {
-          return res.status(200).json({
-            data: false,
-          });
-        } else {
-          const qrInsertCTDH = `INSERT INTO chitietdonhang (MaDonHang, MaKhoaHoc, MaGiangVien, MaCapDo, Gia)
-            VALUES (?, ?, ?, ?, ?)`;
-
-          const excuteInsertCTDH = await this.db.query(qrInsertCTDH, [
-            cartData.MaDonHang,
-            cartData.MaKhoaHoc,
-            cartData.MaGiangVien,
-            cartData.MaCapDo,
-            cartData.Gia,
-          ]);
-
-          return res.status(200).json({
-            data: true,
-          });
+        if (exgetUS.length <= 0) {
+          const query2 = `INSERT INTO nguoidunghoithoai(MaNguoiDung, MaHoiThoai) VALUES (?, ?)`;
+          await this.db.query(query2, [item.MaNguoiDung, hoithoai.MaHoiThoai]);
         }
       }
 
-      const query = `INSERT INTO nguoidunghoithoai( MaNguoiDung ,MaHoiThoai )
-        VALUES ( ?,?)`;
-
-      const excute = await this.db.query(query, [
-        userconvent.TenHoiThoai,
-        userconvent.MaHoiThoai,
-      ]);
-
-      if (excute.affectedRows > 0) {
-        res.status(200).json({
-          status: true,
-        });
-      } else {
-        res.status(200).json({
-          status: false,
-        });
-      }
+      res.status(200).json({
+        status: true,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({

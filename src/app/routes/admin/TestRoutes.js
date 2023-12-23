@@ -4,7 +4,7 @@ const router = express.Router();
 const test = require("../../controllers/admin/TestController");
 const jwtMiddleware = require("../../middlewares/jwtMiddleware");
 
-router.get("/list", test.list);
+router.get("/list/:id", test.list);
 router.post("/create", test.create);
 
 router.post("/delete", test.delete);
@@ -15,10 +15,7 @@ router.post("/update/choice", test.updateChoice);
 router.post("/update/question", test.updateQuestion);
 router.get("/list/teachers", test.getListTeacher);
 router.get("/list/videos", test.getListVideo);
+router.get("/list/videos/teacher/:id", test.listVideoPage);
 
-// router.post("/insert/message", convention.insertMessages);
-// router.post("/insert/userconvention", convention.insertUser);
-// router.get("/list/user", convention.getListUser);
-// router.get("/list/userconvention/:id", convention.getListUserConvention);
 
 module.exports = router;

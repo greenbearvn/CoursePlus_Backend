@@ -12,7 +12,7 @@ router.post("/delete", convention.delete);
 router.get("/detail/:id", convention.detail);
 
 router.post("/insert/message", convention.insertMessages);
-router.post("/insert/userconvention", convention.insertUser);
+// router.post("/insert/userconvention", convention.insertUser);
 router.get("/list/user", convention.getListUser);
 router.get("/list/userconvention/:id", convention.getListUserConvention);
 

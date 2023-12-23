@@ -98,7 +98,7 @@ class QuizController {
     try {
       const bailam = req.body;
 
-      const user = req.session.user || [];
+      const user = req.session.user || {};
 
       const qrInserTested = `INSERT INTO bailam (MaNguoiDung, MaBaiKT, ThoiGianNop, DiemSo)
         VALUES (?, ?, ?, ?)`;

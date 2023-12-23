@@ -31,6 +31,8 @@ const profileAdmin = require("../routes/admin/ProfileRoutes");
 const blogAdmin = require("../routes/admin/BlogRoutes");
 const level = require("../routes/admin/LevelRoutes");
 const comment = require("../routes/admin/CommentRoutes");
+const usmanage = require("../routes/admin/UserManageRoutes");
+const tested = require("../routes/admin/TestedRoutes");
 
 router.use("/home", home);
 router.use("/product", detail);
@@ -59,5 +61,7 @@ router.use("/admin/profile", profileAdmin);
 router.use("/admin/blog", blogAdmin);
 router.use("/admin/level", level);
 router.use("/admin/comment", comment);
+router.use("/admin/usmanage", usmanage);
+router.use("/admin/tested", tested);
 
 module.exports = router;

@@ -184,6 +184,32 @@ class HomeController {
       });
     }
   };
+
+  checkBought = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = req.session.user || {};
+      const get = `select bosuutap.MaBST from bosuutap inner join chitietbst on bosuutap.MaBST = chitietbst.MaBST where MaNguoiDung = ?  and MaKhoaHoc = ?`;
+      const exGetId = await this.db.query(get, [user.MaNguoiDung, id]);
+
+
+      if (exGetId[0].MaBST > 0) {
+        res.status(200).json({
+          data: true,
+        });
+      } else {
+        res.status(200).json({
+          data: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
 }
 
 module.exports = new HomeController();

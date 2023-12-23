@@ -48,6 +48,42 @@ class CommentController {
     }
   };
 
+  listCourses = async (req, res) => {
+    try {
+      const sql = `select * from khoahoc`;
+      const results = await this.db.query(sql, []);
+      if (results) {
+        res.status(200).json({
+          data: results,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  listUsers = async (req, res) => {
+    try {
+      const sql = `select * from nguoidung`;
+      const results = await this.db.query(sql, []);
+      if (results) {
+        res.status(200).json({
+          data: results,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
   detail = async (req, res) => {
     try {
       const { id } = req.params;
@@ -55,7 +91,7 @@ class CommentController {
       const results = await this.db.query(sql, [id]);
       if (results) {
         res.status(200).json({
-          data: results,
+          data: results[0],
         });
       }
     } catch (error) {
@@ -72,7 +108,7 @@ class CommentController {
       const binhluan = req.body;
 
       const query = `INSERT INTO binhluan (MaKhoaHoc , MaNguoiDung, NoiDung,ThoiGian)
-        VALUES ( ?, ?,?, ?,?, ?,?)`;
+        VALUES ( ?, ?,?, ?)`;
 
       const excute = await this.db.query(query, [
         binhluan.MaKhoaHoc,

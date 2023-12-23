@@ -1,42 +1,24 @@
 const Database = require("../../config/database");
 
-class KhoaHocController {
+class UserCourseManagerController {
   constructor() {
     this.db = Database;
   }
 
-  lists = async (req, res) => {
-    try {
-      const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenHoSo, chitietdanhmuc.TenCTDM FROM khoahoc inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo inner join giangvien on khoahoc.MaGiangVien = giangvien.MaHoSo inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM `;
-      const results = await this.db.query(sql, []);
-      if (results) {
-        res.status(200).json({
-          data: results,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        ok: false,
-        error: "Something went wrong!",
-      });
-    }
-  };
-
   listCourseOfUser = async (req, res) => {
     try {
-      const MaNguoiDung = req.params;
-
+      const { MaNguoiDung } = req.params;
       const sql = `SELECT khoahoc.*, capdo.TenCapDo, giangvien.TenHoSo, chitietdanhmuc.TenCTDM FROM khoahoc 
         inner join capdo on khoahoc.MaCapDo = capdo.MaCapDo 
         inner join giangvien on khoahoc.MaGiangVien = giangvien.MaHoSo 
         inner join chitietdanhmuc on khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM 
         where khoahoc.MaGiangVien = ?`;
       const results = await this.db.query(sql, [MaNguoiDung]);
-
-      res.status(200).json({
-        data: results,
-      });
+      if (results.length > 0) {
+        res.status(200).json({
+          data: results,
+        });
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({
@@ -139,8 +121,6 @@ class KhoaHocController {
     try {
       const khoahoc = req.body;
 
-      console.log(khoahoc);
-
       const lastPrice = khoahoc.GiaCu - (khoahoc.GiaCu * khoahoc.GiamGia) / 100;
 
       const query = `INSERT INTO khoahoc (TenKhoaHoc, AnhKhoaHoc, MoTaNgan,MoTaDayDu,ThoiGian,ThoiLuongKhoaHoc,GiaCu,GiamGia,GiaMoi,TrangThai,MaCapDo,MaGiangVien,MaDanhMuc)
@@ -183,7 +163,6 @@ class KhoaHocController {
   delete = async (req, res) => {
     try {
       const khoahoc = req.body;
-      console.log(khoahoc.id);
 
       const del = `DELETE FROM khoahoc WHERE id = '${khoahoc.id}'`;
       const exDel = await this.db.query(del, []);
@@ -262,4 +241,4 @@ class KhoaHocController {
   };
 }
 
-module.exports = new KhoaHocController();
+module.exports = new UserCourseManagerController();
