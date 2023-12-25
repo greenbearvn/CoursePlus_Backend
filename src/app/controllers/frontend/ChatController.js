@@ -1,4 +1,5 @@
 const Database = require("../../config/database");
+const { use } = require("../../routes/frontend/ChatRoutes");
 
 class ChatController {
   constructor() {
@@ -25,14 +26,31 @@ class ChatController {
 
   getUserConventions = async (req, res) => {
     try {
-      const user = req.session.user || {};
-      if (user) {
-        const getListUsers = `select * from hoithoai inner join nguoidunghoithoai on hoithoai.MaHoiThoai = nguoidunghoithoai.MaHoiThoai where MaNguoiDung = ?`;
+      const nguoidung = req.session.user;
+
+      if (nguoidung && nguoidung.MaNguoiDung > 0) {
+        const getListUsers = `select * from hoithoai 
+        inner join nguoidunghoithoai on hoithoai.MaHoiThoai = nguoidunghoithoai.MaHoiThoai 
+        where MaNguoiDung = ?
+        order by hoithoai.MaHoiThoai desc`;
         const exGetListUsers = await this.db.query(getListUsers, [
-          user.MaNguoiDung,
+          nguoidung.MaNguoiDung,
         ]);
 
-        if (exGetListUsers) {
+        for (let i = 0; i < exGetListUsers.length; i++) {
+          const getProfile = `select * from nguoidunghoithoai 
+          inner join giangvien on nguoidunghoithoai.MaNguoiDung = giangvien.MahoSo
+          where MaNguoiDung <> ? and MaHoiThoai = ?`;
+          const exGetProfile = await this.db.query(getProfile, [
+            exGetListUsers[i].MaNguoiDung,
+            exGetListUsers[i].MaHoiThoai,
+          ]);
+
+          if (exGetProfile.length > 0) {
+            exGetListUsers[i].Profile = exGetProfile;
+          }
+        }
+        if (exGetListUsers.length > 0) {
           res.status(200).json({
             status: true,
             data: exGetListUsers,
@@ -43,6 +61,34 @@ class ChatController {
             data: exGetListUsers,
           });
         }
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  getProfileUser = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const getProfile = `select * from giangvien 
+        where MaHoSo = ?`;
+      const exGetProfile = await this.db.query(getProfile, [id]);
+
+      if (exGetProfile.length > 0) {
+        res.status(200).json({
+          status: true,
+          data: exGetProfile[0],
+        });
+      } else {
+        res.status(200).json({
+          status: false,
+          data: exGetProfile[0],
+        });
       }
     } catch (error) {
       console.error(error);

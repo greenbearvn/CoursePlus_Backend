@@ -29,6 +29,118 @@ class ProfileController {
     }
   };
 
+  listCategory = async (req, res) => {
+    try {
+      const sql = `select * from danhmuc`;
+      const results = await this.db.query(sql, []);
+      if (results) {
+        res.status(200).json({
+          data: results,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  uploadImage = async (req, res) => {
+    try {
+      const fileName = req.file ? req.file.filename : "";
+      const fileurl = "http://127.0.0.1:8000/uploads/" + fileName;
+
+      res.json({ fileurl });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  create = async (req, res) => {
+    try {
+      const profile = req.body;
+
+      const query = `INSERT INTO giangvien (MaHoSo , TenHoSo, Email,SoDienThoai,AnhDaiDien,MoTa,MaDanhMuc ,GiangVien)
+        VALUES ( ?, ?,?, ?,?, ?,?,?)`;
+
+      const excute = await this.db.query(query, [
+        profile.MaHoSo,
+        profile.TenHoSo,
+        profile.Email,
+        profile.SoDienThoai,
+        profile.AnhDaiDien,
+        profile.MoTa,
+        profile.MaDanhMuc,
+        profile.GiangVien,
+      ]);
+
+      if (excute.insertId) {
+        res.status(200).json({
+          data: true,
+        });
+      } else {
+        res.status(200).json({
+          data: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  update = async (req, res) => {
+    try {
+      const profile = req.body;
+
+      const query = `UPDATE giangvien SET
+                    TenHoSo = ?,
+                    Email = ?,
+                    SoDienThoai = ?,
+                    AnhDaiDien = ?,
+                    MoTa = ?,
+                    MaDanhMuc = ?,
+                    GiangVien = ?               
+                  WHERE MaHoSo = ?`;
+
+      const excute = await this.db.query(query, [
+        profile.TenHoSo,
+        profile.Email,
+        profile.SoDienThoai,
+        profile.AnhDaiDien,
+        profile.MoTa,
+        profile.MaDanhMuc,
+        profile.GiangVien,
+        profile.MaHoSo,
+      ]);
+
+      if (excute.affectedRows > 0) {
+        res.status(200).json({
+          data: true,
+        });
+      } else {
+        res.status(200).json({
+          data: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
   createConven = async (req, res) => {
     try {
       const uscon1 = req.body;

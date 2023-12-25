@@ -16,6 +16,7 @@ const profile = require("./frontend/ProfileRoutes");
 const blog = require("./frontend/BlogFrontendRoutes");
 const category = require("./frontend/CategoryRoutes");
 const collection = require("./frontend/CollectionRoutes");
+const commentFront = require("./frontend/CommentRoutes");
 
 // admin
 const khoahoc = require("./admin/KhoaHocRoutes");
@@ -46,6 +47,7 @@ router.use("/profile", profile);
 router.use("/blog", blog);
 router.use("/category", category);
 router.use("/collection", collection);
+router.use("/comment", commentFront);
 
 // router.use("/admin/khoahoc",authenticate, khoahoc);
 router.use("/admin/khoahoc", khoahoc);
