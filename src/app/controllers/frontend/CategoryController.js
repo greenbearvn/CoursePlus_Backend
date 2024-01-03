@@ -28,9 +28,123 @@ class CategoryController {
     }
   };
 
-  
+  getLitCourses = async (req, res) => {
+    try {
+      const filter = req.body;
 
-  
+      if (filter.id > 0 && filter.type == "ctdm") {
+        const sql = `SELECT
+      id,
+      TenKhoaHoc,
+      AnhKhoaHoc,
+      MoTaNgan,
+      MoTaDayDu,
+      ThoiGian,
+      ThoiLuongKhoaHoc,
+      GiaCu,
+      GiamGia,
+      GiaMoi,
+      capdo.MaCapDo,
+      capdo.TenCapDo,
+      giangvien.MaHoSo,
+      giangvien.TenHoSo,
+      chitietdanhmuc.MaCTDM,
+      chitietdanhmuc.TenCTDM
+  FROM
+      khoahoc
+  INNER JOIN
+      capdo ON khoahoc.MaCapDo = capdo.MaCapDo
+  INNER JOIN
+      giangvien ON khoahoc.MaGiangVien = giangvien.MaHoSo
+  INNER JOIN
+      chitietdanhmuc ON khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM
+  WHERE
+     chitietdanhmuc.MaCTDM = ?
+     order by id desc`;
+        const results = await this.db.query(sql, [filter.id]);
+        if (results.length > 0) {
+          res.status(200).json({
+            data: results,
+          });
+        }
+      } else if (filter.id > 0 && filter.type == "dm") {
+        const sql = `SELECT
+      id,
+      TenKhoaHoc,
+      AnhKhoaHoc,
+      MoTaNgan,
+      MoTaDayDu,
+      ThoiGian,
+      ThoiLuongKhoaHoc,
+      GiaCu,
+      GiamGia,
+      GiaMoi,
+      capdo.MaCapDo,
+      capdo.TenCapDo,
+      giangvien.MaHoSo,
+      giangvien.TenHoSo,
+      chitietdanhmuc.MaCTDM,
+      chitietdanhmuc.TenCTDM
+  FROM
+      khoahoc
+  INNER JOIN
+      capdo ON khoahoc.MaCapDo = capdo.MaCapDo
+  INNER JOIN
+      giangvien ON khoahoc.MaGiangVien = giangvien.MaHoSo
+  INNER JOIN
+      chitietdanhmuc ON khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM
+  inner join danhmuc on chitietdanhmuc.madm = danhmuc.madm
+  WHERE
+     danhmuc.madm = ?
+     order by id desc`;
+        const results = await this.db.query(sql, [filter.id]);
+        if (results.length > 0) {
+          res.status(200).json({
+            data: results,
+          });
+        }
+      } else {
+        const sql = `SELECT
+        id,
+        TenKhoaHoc,
+        AnhKhoaHoc,
+        MoTaNgan,
+        MoTaDayDu,
+        ThoiGian,
+        ThoiLuongKhoaHoc,
+        GiaCu,
+        GiamGia,
+        GiaMoi,
+        capdo.MaCapDo,
+        capdo.TenCapDo,
+        giangvien.MaHoSo,
+        giangvien.TenHoSo,
+        chitietdanhmuc.MaCTDM,
+        chitietdanhmuc.TenCTDM
+    FROM
+        khoahoc
+    INNER JOIN
+        capdo ON khoahoc.MaCapDo = capdo.MaCapDo
+    INNER JOIN
+        giangvien ON khoahoc.MaGiangVien = giangvien.MaHoSo
+    INNER JOIN
+        chitietdanhmuc ON khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM
+       order by id desc`;
+        const results = await this.db.query(sql, [filter.id]);
+        if (results.length > 0) {
+          res.status(200).json({
+            data: results,
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
 }
 
 module.exports = new CategoryController();

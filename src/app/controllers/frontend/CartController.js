@@ -29,7 +29,7 @@ class CartController {
       const {
         id,
         TenKhoaHoc,
-        MaGiangVien,
+        MaHoSo,
         GiaMoi,
         MaCapDo,
         ThoiLuongKhoaHoc,
@@ -37,7 +37,7 @@ class CartController {
         TenHoSo,
         TenCTDM,
         GiaCu,
-        AnhKhoaHoc
+        AnhKhoaHoc,
       } = req.body.cart;
 
       if (!req.session.cart) {
@@ -61,7 +61,7 @@ class CartController {
         const cartData = {
           id: id,
           TenKhoaHoc: TenKhoaHoc,
-          MaGiangVien: MaGiangVien,
+          MaHoSo: MaHoSo,
           GiaMoi: GiaMoi,
           MaCapDo: MaCapDo,
           ThoiLuongKhoaHoc: ThoiLuongKhoaHoc,
@@ -69,7 +69,7 @@ class CartController {
           TenHoSo: TenHoSo,
           TenCTDM: TenCTDM,
           GiaCu: GiaCu,
-          AnhKhoaHoc: AnhKhoaHoc
+          AnhKhoaHoc: AnhKhoaHoc,
         };
         req.session.cart.push(cartData);
         res.status(200).json({
@@ -107,7 +107,7 @@ class CartController {
       }
 
       res.status(200).json({
-        data: listCart,
+        data: true,
       });
     } catch (error) {
       console.error(error);
@@ -129,13 +129,59 @@ class CartController {
 
       for (let i = 0; i < listCart.length; i++) {
         total += listCart[i].GiaMoi;
-        count +=1;
+        count += 1;
       }
 
       res.status(200).json({
         data: total,
-        count:count
+        count: count,
       });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
+  checkCourseBought = async (req, res) => {
+    try {
+      const user = req.session.user || {};
+      const manguoidung = user.MaNguoiDung;
+
+      let listCart = req.session.cart;
+      if (!listCart) {
+        listCart = [];
+      }
+      // kiểm tra xem đã mua khóa học ở trong bộ sưu tập của mình hay chưa
+      let hasDuplicateCourse = false;
+      for (let i = 0; i < listCart.length; i++) {
+        const getMaBST =
+          "SELECT * FROM bosuutap inner join chitietbst on  bosuutap.MaBST = chitietbst.MaBST WHERE MaNguoiDung = ? AND MaKhoaHoc = ?";
+
+        const exGetMaBST = await this.db.query(getMaBST, [
+          manguoidung,
+          listCart[i].id,
+        ]);
+
+        if (exGetMaBST.length > 0) {
+          if (exGetMaBST[0].MaBST > 0) {
+            hasDuplicateCourse = true;
+            break;
+          }
+        }
+      }
+
+      if (hasDuplicateCourse == true) {
+        res.status(200).json({
+          data: true,
+        });
+      } else {
+        res.status(200).json({
+          data: false,
+        });
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({

@@ -48,10 +48,10 @@ class WatchingController {
     try {
       const { id } = req.params;
       const sql = `SELECT * FROM baikiemtra 
-      inner join video on baikiemtra.MaVideo = video.MaVideo
-      inner join baihoc on video.MabaiHoc = baihoc.MaBaiHoc 
-       where baihoc.MaKhoaHoc = ?
-       oder by MaBaiKT ASC`;
+      INNER JOIN video ON baikiemtra.MaVideo = video.MaVideo
+      INNER JOIN baihoc ON video.MabaiHoc = baihoc.MaBaiHoc 
+      WHERE baihoc.MaKhoaHoc = ?
+      ORDER BY MaBaiKT ASC`;
       const results = await this.db.query(sql, [id]);
       if (results) {
         res.status(200).json({

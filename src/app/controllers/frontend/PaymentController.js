@@ -6,6 +6,74 @@ class HomeController {
     this.db = Database;
   }
 
+  // saveToDB = async (req, res) => {
+  //   try {
+  //     const user = req.session.user ;
+  //     const manguoidung = user.MaNguoiDung;
+  //     const date = new Date();
+
+  //     let total = 0;
+  //     let listCart = req.session.cart || []; // Use let instead of const, and set it to an empty array if undefined
+
+  //     for (let i = 0; i < listCart.length; i++) {
+  //       total += listCart[i].GiaMoi;
+  //     }
+
+  //     // Check if the user has already purchased the course in their collection
+  //     for (let i = 0; i < listCart.length; i++) {
+  //       const getMaBST =
+  //         "SELECT * FROM bosuutap inner join chitietbst on bosuutap.MaBST = chitietbst.MaBST WHERE MaNguoiDung = ? AND MaKhoaHoc = ?";
+
+  //       const exGetMaBST = await this.db.query(getMaBST, [
+  //         manguoidung,
+  //         listCart[i].MaKhoaHoc,
+  //       ]);
+
+  //       if (exGetMaBST.length > 0) {
+  //         return res.status(200).json({
+  //           data: false,
+  //         });
+  //       }
+  //     }
+
+  //     // Insert order details
+  //     const qrInsertDH = `INSERT INTO donhang (MaNguoiDung, NgayLap, Tongtien) VALUES (?, ?, ?)`;
+  //     const madh = await this.db.query(qrInsertDH, [manguoidung, date, total]);
+
+  //     // Insert order items
+  //     for (let i = 0; i < listCart.length; i++) {
+  //       const cartData = {
+  //         MaDonHang: madh.insertId,
+  //         MaKhoaHoc: listCart[i].id,
+  //         MaHoSo: listCart[i].MaHoSo,
+  //         MaCapDo: listCart[i].MaCapDo,
+  //         Gia: listCart[i].GiaMoi,
+  //       };
+
+  //       const qrInsertCTDH = `INSERT INTO chitietdonhang (MaDonHang, MaKhoaHoc, MaGiangVien, MaCapDo, Gia) VALUES (?, ?, ?, ?, ?)`;
+
+  //       await this.db.query(qrInsertCTDH, [
+  //         cartData.MaDonHang,
+  //         cartData.MaKhoaHoc,
+  //         cartData.MaHoSo,
+  //         cartData.MaCapDo,
+  //         cartData.Gia,
+  //       ]);
+  //     }
+
+  //     req.session.cart = [];
+  //     return res.status(200).json({
+  //       data: true,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(500).json({
+  //       ok: false,
+  //       error: "Something went wrong!",
+  //     });
+  //   }
+  // };
+
   saveToDB = async (req, res) => {
     try {
       const user = req.session.user;
@@ -13,7 +81,7 @@ class HomeController {
       const date = new Date();
 
       let total = 0;
-      const listCart = req.session.cart;
+      let listCart = req.session.cart;
       if (!listCart) {
         listCart = [];
       }
@@ -23,7 +91,7 @@ class HomeController {
       }
 
       const qrInsertDH = `INSERT INTO donhang (MaNguoiDung, NgayLap, Tongtien)
-                        VALUES (?, ?, ?)`;
+      VALUES (?, ?, ?)`;
 
       const madh = await this.db.query(qrInsertDH, [manguoidung, date, total]);
 
@@ -31,18 +99,18 @@ class HomeController {
         let cartData = {
           MaDonHang: madh.insertId,
           MaKhoaHoc: listCart[i].id,
-          MaGiangVien: listCart[i].MaGiangVien,
+          MaHoSo: listCart[i].MaHoSo,
           MaCapDo: listCart[i].MaCapDo,
           Gia: listCart[i].GiaMoi,
         };
 
         const qrInsertCTDH = `INSERT INTO chitietdonhang (MaDonHang, MaKhoaHoc, MaGiangVien, MaCapDo, Gia)
-                        VALUES (?, ?, ?, ?, ?)`;
+        VALUES (?, ?, ?, ?, ?)`;
 
-        const excute = await this.db.query(qrInsertCTDH, [
+        await this.db.query(qrInsertCTDH, [
           cartData.MaDonHang,
           cartData.MaKhoaHoc,
-          cartData.MaGiangVien,
+          cartData.MaHoSo,
           cartData.MaCapDo,
           cartData.Gia,
         ]);
@@ -63,7 +131,7 @@ class HomeController {
 
   addToCollection = async (req, res) => {
     try {
-      const user = req.session.user || {};
+      const user = req.session.user;
       const manguoidung = user.MaNguoiDung;
       let listCart = req.session.cart;
       if (!listCart) {

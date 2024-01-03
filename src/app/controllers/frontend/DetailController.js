@@ -49,6 +49,66 @@ class HomeController {
     }
   };
 
+  getRecommendCourses = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const getId = `SELECT * FROM khoahoc WHERE id = ?`;
+      const exGetId = await this.db.query(getId, [id]);
+      if (exGetId.length > 0) {
+        const getCategory = `SELECT * FROM chitietdanhmuc
+          INNER JOIN danhmuc ON chitietdanhmuc.madm = danhmuc.madm
+          WHERE MaCTDM = ?`;
+        const exGetCategory = await this.db.query(getCategory, [
+          exGetId[0].MaDanhMuc,
+        ]);
+        if (exGetCategory.length > 0) {
+          const sql = `SELECT
+            khoahoc.id,
+            khoahoc.TenKhoaHoc,
+            khoahoc.AnhKhoaHoc,
+            khoahoc.MoTaNgan,
+            khoahoc.MoTaDayDu,
+            khoahoc.ThoiGian,
+            khoahoc.ThoiLuongKhoaHoc,
+            khoahoc.GiaCu,
+            khoahoc.GiamGia,
+            khoahoc.GiaMoi,
+            capdo.MaCapDo,
+            capdo.TenCapDo,
+            giangvien.MaHoSo,
+            giangvien.TenHoSo,
+            chitietdanhmuc.MaCTDM,
+            chitietdanhmuc.TenCTDM
+          FROM
+            khoahoc
+          INNER JOIN
+            capdo ON khoahoc.MaCapDo = capdo.MaCapDo
+          INNER JOIN
+            giangvien ON khoahoc.MaGiangVien = giangvien.MaHoSo
+          INNER JOIN
+            chitietdanhmuc ON khoahoc.MaDanhMuc = chitietdanhmuc.MaCTDM
+          INNER JOIN
+            danhmuc ON chitietdanhmuc.madm = danhmuc.madm
+          WHERE
+            danhmuc.madm = ?`;
+          const results = await this.db.query(sql, [exGetCategory[0].madm]);
+
+          if (results.length > 0) {
+            res.status(200).json({
+              data: results,
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        ok: false,
+        error: "Something went wrong!",
+      });
+    }
+  };
+
   getLession = async (req, res) => {
     try {
       const { id } = req.params;
@@ -118,17 +178,18 @@ class HomeController {
 
       const getId = `select * from khoahoc where id = ?`;
       const exGetId = await this.db.query(getId, [id]);
+      if (exGetId.length > 0) {
+        const teacherId = exGetId[0].MaGiangVien;
 
-      const teacherId = exGetId[0].MaGiangVien;
+        const getInfor = `select *, danhmuc.tendm from giangvien inner join danhmuc on giangvien.MaDanhMuc = danhmuc.madm where MaHoSo = ?`;
 
-      const getInfor = `select *, danhmuc.tendm from giangvien inner join danhmuc on giangvien.MaDanhMuc = danhmuc.madm where MaHoSo = ?`;
+        const ExGetInfor = await this.db.query(getInfor, [teacherId]);
 
-      const ExGetInfor = await this.db.query(getInfor, [teacherId]);
-
-      if (ExGetInfor) {
-        res.status(200).json({
-          data: ExGetInfor[0],
-        });
+        if (ExGetInfor) {
+          res.status(200).json({
+            data: ExGetInfor[0],
+          });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -192,15 +253,16 @@ class HomeController {
       const get = `select bosuutap.MaBST from bosuutap inner join chitietbst on bosuutap.MaBST = chitietbst.MaBST where MaNguoiDung = ?  and MaKhoaHoc = ?`;
       const exGetId = await this.db.query(get, [user.MaNguoiDung, id]);
 
-
-      if (exGetId[0].MaBST > 0) {
-        res.status(200).json({
-          data: true,
-        });
-      } else {
-        res.status(200).json({
-          data: false,
-        });
+      if (exGetId[0]) {
+        if (exGetId[0].MaBST > 0) {
+          res.status(200).json({
+            data: true,
+          });
+        } else {
+          res.status(200).json({
+            data: false,
+          });
+        }
       }
     } catch (error) {
       console.error(error);

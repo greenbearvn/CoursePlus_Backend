@@ -11,4 +11,6 @@ router.post("/product/delete", cart.deleteItem);
 
 router.get("/product/totalmoney", cart.totalMoney);
 
+router.get("/product/checkBought", cart.checkCourseBought);
+
 module.exports = router;

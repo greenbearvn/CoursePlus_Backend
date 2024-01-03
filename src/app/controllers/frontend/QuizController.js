@@ -100,14 +100,14 @@ class QuizController {
 
       const user = req.session.user || {};
 
-      const qrInserTested = `INSERT INTO bailam (MaNguoiDung, MaBaiKT, ThoiGianNop, DiemSo)
+      const qrInserTested = `INSERT INTO bailam (MaNguoiDung, MaBaiKT, ThoiGianNop, ChinhXac)
         VALUES (?, ?, ?, ?)`;
 
       const ex = await this.db.query(qrInserTested, [
         user.MaNguoiDung,
         bailam.MaBaiKT,
         bailam.ThoiGianNop,
-        bailam.DiemSo,
+        bailam.ChinhXac,
       ]);
 
       if (ex.insertId > 0) {
