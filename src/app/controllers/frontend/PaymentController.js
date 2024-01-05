@@ -6,78 +6,10 @@ class HomeController {
     this.db = Database;
   }
 
-  // saveToDB = async (req, res) => {
-  //   try {
-  //     const user = req.session.user ;
-  //     const manguoidung = user.MaNguoiDung;
-  //     const date = new Date();
-
-  //     let total = 0;
-  //     let listCart = req.session.cart || []; // Use let instead of const, and set it to an empty array if undefined
-
-  //     for (let i = 0; i < listCart.length; i++) {
-  //       total += listCart[i].GiaMoi;
-  //     }
-
-  //     // Check if the user has already purchased the course in their collection
-  //     for (let i = 0; i < listCart.length; i++) {
-  //       const getMaBST =
-  //         "SELECT * FROM bosuutap inner join chitietbst on bosuutap.MaBST = chitietbst.MaBST WHERE MaNguoiDung = ? AND MaKhoaHoc = ?";
-
-  //       const exGetMaBST = await this.db.query(getMaBST, [
-  //         manguoidung,
-  //         listCart[i].MaKhoaHoc,
-  //       ]);
-
-  //       if (exGetMaBST.length > 0) {
-  //         return res.status(200).json({
-  //           data: false,
-  //         });
-  //       }
-  //     }
-
-  //     // Insert order details
-  //     const qrInsertDH = `INSERT INTO donhang (MaNguoiDung, NgayLap, Tongtien) VALUES (?, ?, ?)`;
-  //     const madh = await this.db.query(qrInsertDH, [manguoidung, date, total]);
-
-  //     // Insert order items
-  //     for (let i = 0; i < listCart.length; i++) {
-  //       const cartData = {
-  //         MaDonHang: madh.insertId,
-  //         MaKhoaHoc: listCart[i].id,
-  //         MaHoSo: listCart[i].MaHoSo,
-  //         MaCapDo: listCart[i].MaCapDo,
-  //         Gia: listCart[i].GiaMoi,
-  //       };
-
-  //       const qrInsertCTDH = `INSERT INTO chitietdonhang (MaDonHang, MaKhoaHoc, MaGiangVien, MaCapDo, Gia) VALUES (?, ?, ?, ?, ?)`;
-
-  //       await this.db.query(qrInsertCTDH, [
-  //         cartData.MaDonHang,
-  //         cartData.MaKhoaHoc,
-  //         cartData.MaHoSo,
-  //         cartData.MaCapDo,
-  //         cartData.Gia,
-  //       ]);
-  //     }
-
-  //     req.session.cart = [];
-  //     return res.status(200).json({
-  //       data: true,
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res.status(500).json({
-  //       ok: false,
-  //       error: "Something went wrong!",
-  //     });
-  //   }
-  // };
-
   saveToDB = async (req, res) => {
     try {
-      const user = req.session.user;
-      const manguoidung = user.MaNguoiDung;
+      const user = req.session.user ;
+    
       const date = new Date();
 
       let total = 0;
@@ -93,7 +25,7 @@ class HomeController {
       const qrInsertDH = `INSERT INTO donhang (MaNguoiDung, NgayLap, Tongtien)
       VALUES (?, ?, ?)`;
 
-      const madh = await this.db.query(qrInsertDH, [manguoidung, date, total]);
+      const madh = await this.db.query(qrInsertDH, [user.MaNguoiDung, date, total]);
 
       for (let i = 0; i < listCart.length; i++) {
         let cartData = {
@@ -132,13 +64,13 @@ class HomeController {
   addToCollection = async (req, res) => {
     try {
       const user = req.session.user;
-      const manguoidung = user.MaNguoiDung;
+     
       let listCart = req.session.cart;
       if (!listCart) {
         listCart = [];
       }
 
-      const checkBST = `SELECT * FROM bosuutap where MaNguoiDung = '${manguoidung}'`;
+      const checkBST = `SELECT * FROM bosuutap where MaNguoiDung = '${user.MaNguoiDung}'`;
       const exckBST = await this.db.query(checkBST, []);
 
       if (exckBST.length > 0) {
@@ -177,7 +109,7 @@ class HomeController {
       } else {
         const qrInsertBST = `INSERT INTO bosuutap (MaNguoiDung) VALUES (?)`;
 
-        const exInsertBST = await this.db.query(qrInsertBST, [manguoidung]);
+        const exInsertBST = await this.db.query(qrInsertBST, [user.MaNguoiDung]);
 
         if (exInsertBST.insertId) {
           let isDataValid = true;
@@ -253,31 +185,31 @@ class HomeController {
       if (!listCart) {
         listCart = [];
       }
-
+  
       for (let i = 0; i < listCart.length; i++) {
         total += listCart[i].GiaMoi;
       }
-
+  
       var ipAddr =
         req.headers["x-forwarded-for"] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
-
+  
       const vnpay = require("../../config/vnpay");
-
+  
       var tmnCode = vnpay.vnp_TmnCode;
       var secretKey = vnpay.vnp_HashSecret;
       var vnpUrl = vnpay.vnp_Url;
       var returnUrl = vnpay.vnp_ReturnUrl;
-
+  
       let date = new Date();
       let createDate = moment(date).format("YYYYMMDDHHmmss");
-
+  
       let orderId = moment(date).format("DDHHmmss");
-
+  
       var amount = total;
-
+  
       var orderInfo = content;
       var orderType = "billpayment";
       var locale = "vn";
@@ -302,17 +234,17 @@ class HomeController {
       if (bankCode !== null && bankCode !== "") {
         vnp_Params["vnp_BankCode"] = bankCode;
       }
-
+  
       vnp_Params = this.sortObject(vnp_Params);
-
+  
       var querystring = require("qs");
       var signData = querystring.stringify(vnp_Params, { encode: false });
       var crypto = require("crypto");
       var hmac = crypto.createHmac("sha512", secretKey);
-      var signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+      var signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
       vnp_Params["vnp_SecureHash"] = signed;
       vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-
+  
       res.status(200).json({
         data: vnpUrl,
       });
@@ -328,28 +260,28 @@ class HomeController {
   returnPayment = async (req, res) => {
     try {
       let vnp_Params = req.query;
-
+  
       let secureHash = vnp_Params["vnp_SecureHash"];
-
+  
       delete vnp_Params["vnp_SecureHash"];
       delete vnp_Params["vnp_SecureHashType"];
-
+  
       vnp_Params = this.sortObject(vnp_Params);
-
+  
       const vnpay = require("../../config/vnpay");
-
+  
       var tmnCode = vnpay.vnp_TmnCode;
       var secretKey = vnpay.vnp_HashSecret;
-
+  
       let querystring = require("qs");
       let signData = querystring.stringify(vnp_Params, { encode: false });
       let crypto = require("crypto");
       let hmac = crypto.createHmac("sha512", secretKey);
-      let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
-
+      let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+  
       if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-
+  
         res.status(200).json({
           data: vnp_Params["vnp_ResponseCode"],
         });

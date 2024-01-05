@@ -8,7 +8,7 @@ class CommentController {
   list = async (req, res) => {
     try {
       const { id } = req.params;
-      const sql = `select * from binhluan where MaKhoaHoc = ? order by MaBinhLuan desc`;
+      const sql = `select * from binhluan inner join giangvien on binhluan.MaNguoiDung = giangvien.MaHoSo where MaKhoaHoc = ? order by MaBinhLuan desc`;
       const results = await this.db.query(sql, [id]);
 
       res.status(200).json({

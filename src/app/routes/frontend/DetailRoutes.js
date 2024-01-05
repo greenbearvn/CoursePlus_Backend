@@ -12,4 +12,5 @@ router.get("/detail/comments/:id", detail.getAllComments);
 router.get("/detail/courses/recommend/:id", detail.getRelateCourses);
 router.get("/detail/courses/same/:id", detail.getRecommendCourses);
 router.get("/detail/check/bought/:id", detail.checkBought);
+router.get("/detail/check/bought/course/:id", detail.checkBoughtCourse);
 module.exports = router;
